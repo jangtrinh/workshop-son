@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 2 — Customize</title>
+<link rel="stylesheet" href="../../hoc-vien/shared.css">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head><body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand"><h2>Workshop</h2><p>AI Agent · Sơn</p></div>
+    <div class="nav-group">
+      <div class="nav-label">Modules</div>
+      <a href="../index.html" class="nav-link">← Hub</a>
+      <a href="level-1-understand.html" class="nav-link">Level 1 · Understand</a>
+      <a href="level-2-customize.html" class="nav-link active">Level 2 · Customize</a>
+      <a href="level-3-build.html" class="nav-link">Level 3 · Build</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Phụ lục</div>
+      <a href="../appendix/examples-personas.html" class="nav-link">Ví Dụ Theo Persona</a>
+    </div>
+  </nav>
+  <main class="main">
+    <span class="tag tag-week">Level 2</span>
+    <h1>Customize</h1>
+    <p class="subtitle">Rules Files · Workflows · Anti-Patterns · Đa Nền Tảng</p>
+
+    <div style="background:var(--bg-muted);border:1px solid var(--border);padding:16px 20px;margin:16px 0">
+      <div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--slate);margin-bottom:8px"><i class="ph ph-headphones"></i> Podcast — Nghe tổng quan Level 2</div>
+      <audio controls preload="none" style="width:100%">
+        <source src="../audio/Nhúng AI và bẫy tự động hóa.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <div class="objectives">
+      <div class="objectives-title"><i class="ph ph-target"></i> Sau level này, bạn sẽ</div>
+      <div class="objective"><div class="obj-icon">1</div> Viết rules file cho project → AI tuân thủ trên toàn workspace</div>
+      <div class="objective"><div class="obj-icon">2</div> Thiết kế workflow multi-step với slash commands</div>
+      <div class="objective"><div class="obj-icon">3</div> Biết khi nào KHÔNG dùng agent (anti-patterns)</div>
+      <div class="objective"><div class="obj-icon">4</div> Hiểu ecosystem: GEMINI.md, .cursorrules, CLAUDE.md</div>
+    </div>
+
+    <!-- 2.1 RULES FILES -->
+    <h2>2.1 — Rules Files</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-2.1-rules-files.wav" type="audio/wav"></audio>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Từ Gem → Rules File</div>
+      <p style="font-size:20px;margin:0">Gem = customize AI trong <em>app chat</em>. Rules File = customize AI trong <em>code editor</em>, áp dụng cho toàn bộ project, version control được qua Git. Sức mạnh lớn hơn nhiều: text + code + file access + terminal.</p>
+    </div>
+
+    <h3>So sánh Gem vs Rules File</h3>
+    <table>
+      <thead><tr><th></th><th>Gem (Level 1)</th><th>Rules File (Level 2)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Nền tảng</strong></td><td>Gemini App (web/mobile)</td><td>Code editor (Cursor, Antigravity)</td></tr>
+        <tr><td><strong>Format</strong></td><td>Textarea plain text</td><td>Markdown file → Git version control</td></tr>
+        <tr><td><strong>Scope</strong></td><td>1 conversation thread</td><td>Toàn bộ project / workspace</td></tr>
+        <tr><td><strong>Khả năng</strong></td><td>Text generation</td><td>Text + code + file + terminal</td></tr>
+        <tr><td><strong>Chia sẻ</strong></td><td>Link/copy</td><td>Git repository</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Cách hoạt động</h3>
+    <div class="code-block"><pre>Bạn mở project trong code editor
+        │
+        ▼
+Editor tìm rules file (GEMINI.md / .cursorrules / CLAUDE.md)
+        │
+        ▼
+Nội dung rules được INJECT vào mọi AI request
+        │
+        ▼
+AI trả lời dựa trên: [Model] + [Rules] + [Files] + [Prompt]</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Ecosystem Rules Files</h3>
+    <table>
+      <thead><tr><th>Platform</th><th>File Name</th><th>Location</th><th>Đặc biệt</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Antigravity (Gemini)</strong></td><td>GEMINI.md</td><td>Root / .gemini/</td><td>rules/ folder, YAML frontmatter</td></tr>
+        <tr><td><strong>Cursor</strong></td><td>.cursorrules</td><td>Root</td><td>Plain text, ~6K tokens</td></tr>
+        <tr><td><strong>Windsurf</strong></td><td>.windsurfrules</td><td>Root</td><td>Tương tự Cursor</td></tr>
+        <tr><td><strong>Claude Code</strong></td><td>CLAUDE.md</td><td>Root</td><td>Markdown, sub-files</td></tr>
+        <tr><td><strong>GitHub Copilot</strong></td><td>copilot-instructions.md</td><td>.github/</td><td>Markdown</td></tr>
+        <tr><td><strong>Cline</strong></td><td>.clinerules</td><td>Root</td><td>Plain text</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight"><strong>Key insight:</strong> Concept giống nhau, syntax khác nhau. Viết rules 1 lần, adapt cho nhiều platform.</div>
+
+    <h3>Template: Rules File cơ bản</h3>
+    <div class="code-block"><pre># Project Rules
+
+## About This Project
+[Mô tả ngắn project, tech stack, mục tiêu]
+
+## Code Style
+- Use TypeScript strict mode
+- Prefer functional components
+- Max function length: 20 lines
+- Always handle errors explicitly
+
+## Naming Convention
+- Files: kebab-case (user-profile.tsx)
+- Components: PascalCase (UserProfile)
+- Functions: camelCase (getUserProfile)
+
+## Architecture
+- Pages in /app
+- Components in /components
+- Utilities in /lib
+
+## Constraints
+- DO NOT create files outside the project structure
+- DO NOT install new dependencies without asking
+- Always check existing utilities before creating new ones</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <div class="reflection">
+      <div class="reflection-label"><i class="ph ph-pencil-simple"></i> Bài tập — Viết Rules File</div>
+      <p style="font-size:17px;color:var(--slate)">Viết rules file cho project hiện tại. Test: hỏi AI tạo component → xem tuân thủ chưa:</p>
+      <textarea class="reflection-space" style="min-height:120px" placeholder="# Project Rules&#10;&#10;## About&#10;...&#10;&#10;## Code Style&#10;..."></textarea>
+    </div>
+
+    <!-- 2.2 WORKFLOWS -->
+    <h2>2.2 — Workflows</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-2.2-workflows.wav" type="audio/wav"></audio>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Tại Sao</div>
+      <p style="font-size:20px;margin:0">Workflow = <strong>chuỗi bước có thứ tự</strong> mà AI thực hiện khi trigger bằng slash command. Prompt đơn = 1 bước. Gem/Rules = lặp lại nhưng 1 bước. Workflow = nhiều bước, có thứ tự, multi-file output.</p>
+    </div>
+
+    <h3>Cấu trúc Workflow File</h3>
+    <div class="code-block"><pre>---
+description: Tóm tắt workflow làm gì (1 dòng)
+---
+
+# /workflow-name — Tiêu đề
+
+## Bước 1: [Tên bước]
+[Hướng dẫn chi tiết]
+
+## Bước 2: [Tên bước]
+[Hướng dẫn chi tiết]</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Ví dụ thực tế: /ship</h3>
+    <div class="code-block"><pre>---
+description: Automated ship pipeline — merge, test, commit, push
+---
+
+# /ship — Ship Code Pipeline
+
+## Step 1: Merge Latest
+Pull latest from main → avoid conflicts.
+
+## Step 2: Run Tests
+Full test suite. If fail → STOP and report.
+
+## Step 3: Lint & Format
+Run linter. Auto-fix where possible.
+
+## Step 4: Version Bump
+fix → patch | feat → minor | breaking → major
+
+## Step 5: Commit
+Conventional commit with proper scope.
+
+## Step 6: Push & Create PR
+Push branch + create pull request.</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <div class="best-practice">
+      <div class="bp-label"><i class="ph ph-check-circle"></i> // turbo annotation</div>
+      <p style="font-size:20px;margin:0">Đặt <code>// turbo</code> trước step để AI tự chạy không hỏi permission. Dùng cho safe steps (lint, test). <code>// turbo-all</code> = auto-run toàn bộ workflow.</p>
+    </div>
+
+    <h3>Workflow cho từng vai trò</h3>
+    <table>
+      <thead><tr><th>Vai trò</th><th>Workflow</th><th>Bước chính</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Developer</strong></td><td>/deploy</td><td>Lint → Test → Build → Deploy → Verify</td></tr>
+        <tr><td><strong>Designer</strong></td><td>/handoff</td><td>Export → Specs → Ticket → Notify dev</td></tr>
+        <tr><td><strong>PM</strong></td><td>/sprint-review</td><td>Metrics → Report → Email → Schedule</td></tr>
+        <tr><td><strong>Content</strong></td><td>/publish</td><td>Grammar → SEO → Format → Schedule</td></tr>
+        <tr><td><strong>QA</strong></td><td>/regression</td><td>Scope → Suite → Diffs → Report</td></tr>
+      </tbody>
+    </table>
+
+    <div class="reflection">
+      <div class="reflection-label"><i class="ph ph-pencil-simple"></i> Bài tập — Thiết kế Workflow</div>
+      <p style="font-size:17px;color:var(--slate)">Thiết kết 1 workflow cho task lặp đi lặp lại trong công việc:</p>
+      <textarea class="reflection-space" style="min-height:120px" placeholder="Workflow name: /...&#10;Description: ...&#10;&#10;Step 1: ...&#10;Step 2: ...&#10;Step 3: ..."></textarea>
+    </div>
+
+    <!-- 2.3 ANTI-PATTERNS -->
+    <h2>2.3 — Khi Nào KHÔNG Dùng Agent</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-2.3-anti-patterns.wav" type="audio/wav"></audio>
+
+    <h3><i class="ph ph-prohibit"></i> Over-Automation Anti-Patterns</h3>
+    <table>
+      <thead><tr><th>Anti-Pattern</th><th>Vấn đề</th><th>Giải pháp</th></tr></thead>
+      <tbody>
+        <tr><td><strong>"Automate Everything"</strong></td><td>Setup > tiết kiệm</td><td>Rule of 3: chỉ automate task lặp >3/tuần</td></tr>
+        <tr><td><strong>"AI viết, tôi paste"</strong></td><td>Technical debt</td><td>Luôn review + hiểu output</td></tr>
+        <tr><td><strong>"1 mega prompt"</strong></td><td>AI overload</td><td>1 task = 1 prompt. Workflow cho multi-step</td></tr>
+        <tr><td><strong>"AI thay thế thinking"</strong></td><td>Bad decisions</td><td>AI assist ≠ AI decide</td></tr>
+        <tr><td><strong>"Context dump"</strong></td><td>Noise > signal</td><td>Selective context, chỉ file/fn liên quan</td></tr>
+        <tr><td><strong>"Trust first output"</strong></td><td>Hallucination</td><td>Verify facts, test code</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Framework: Nên Automate Không?</h3>
+    <div class="code-block"><pre>                    EFFORT TO AUTOMATE
+                Low ◄──────────────► High
+             ┌──────────┬──────────────┐
+   High      │  <i class="ph ph-check-circle"></i> DO IT │  <i class="ph ph-question"></i> EVALUATE │
+FREQUENCY    │  No       │  ROI calc    │
+             │  brainer  │  needed      │
+             ├──────────┼──────────────┤
+   Low       │  <i class="ph ph-lightning"></i> MAYBE │  <i class="ph ph-x-circle"></i> DON'T    │
+             │  If easy  │  waste of    │
+             │  why not  │  time        │
+             └──────────┴──────────────┘</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>KHÔNG dùng khi</h3>
+    <div class="example">
+      <div class="example-bad"><i class="ph ph-x-circle"></i> Task quá đơn giản (< 2 phút tự làm)</div>
+      <div class="example-bad"><i class="ph ph-x-circle"></i> Cần 100% chính xác (legal, financial, medical)</div>
+      <div class="example-bad"><i class="ph ph-x-circle"></i> Không có cách verify output</div>
+      <div class="example-bad"><i class="ph ph-x-circle"></i> Cần empathy / emotional intelligence thật</div>
+      <div class="example-bad"><i class="ph ph-x-circle"></i> Security-sensitive (secrets, credentials)</div>
+    </div>
+    <h3>NÊN dùng khi</h3>
+    <div class="example">
+      <div class="example-good"><i class="ph ph-check-circle"></i> Task lặp với pattern rõ ràng</div>
+      <div class="example-good"><i class="ph ph-check-circle"></i> Cần explore nhiều options nhanh</div>
+      <div class="example-good"><i class="ph ph-check-circle"></i> Boilerplate code / documentation</div>
+      <div class="example-good"><i class="ph ph-check-circle"></i> Refactoring theo quy chuẩn có sẵn</div>
+      <div class="example-good"><i class="ph ph-check-circle"></i> Research & summarization</div>
+    </div>
+
+    <div class="insight" style="margin-top:40px">
+      <strong><i class="ph ph-push-pin"></i> Xem ví dụ thực tế:</strong> Workflow /proposal cho Anh Sơn · Workflow /paper-review cho Cún → <a href="../appendix/examples-personas.html" style="color:var(--black);font-weight:700">Ví Dụ Theo Persona</a>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="level-1-understand.html">← Level 1: Understand</a>
+      <a href="level-3-build.html">Level 3: Build →</a>
+    </div>
+  </main>
+</div>
+<script>function copyCode(e){e.stopPropagation();const p=e.target.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(p.textContent);const b=e.target;b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)}</script>
+</body></html>

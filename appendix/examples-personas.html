@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ví Dụ Theo Persona — Workshop Sơn</title>
+<link rel="stylesheet" href="../../hoc-vien/shared.css">
+<style>
+  .persona-tag { display: inline-block; padding: 6px 16px; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .persona-son { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+  .persona-cun { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .tool-card { border: 1px solid var(--border); padding: 20px 24px; transition: all 0.15s; }
+  .tool-card:hover { border-color: var(--black); }
+  .tool-name { font-family: var(--heading); font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .tool-level { font-size: 13px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 1px; }
+  .tool-desc { font-size: 17px; color: var(--slate); margin-top: 6px; }
+  .usecase { border: 1px solid var(--border); padding: 24px 28px; margin: 16px 0; }
+  .usecase-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--slate); margin-bottom: 8px; }
+  .compare-grid { display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; border: 3px solid var(--black); margin: 24px 0; }
+  .compare-cell { padding: 14px 18px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); font-size: 17px; line-height: 24px; }
+  .compare-cell:last-child { border-right: none; }
+  .compare-header { background: var(--black); color: var(--white); font-family: var(--heading); font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-bottom: none; }
+  .compare-label { font-weight: 700; background: var(--bg-muted); }
+  .divider { height: 1px; background: var(--border); margin: 60px 0; }
+  .pipeline-step { display: flex; align-items: flex-start; gap: 12px; margin: 8px 0; }
+  .step-num { width: 28px; height: 28px; background: var(--black); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .step-text { font-size: 17px; line-height: 24px; }
+  .step-arrow { text-align: center; font-size: 20px; color: var(--slate); margin: 4px 0; }
+  .tab-bar { display: flex; gap: 0; margin: 32px 0 0; border-bottom: 3px solid var(--black); }
+  .tab-btn { padding: 14px 32px; font-family: var(--heading); font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: var(--bg-muted); border: 1px solid var(--border); border-bottom: none; cursor: pointer; color: var(--slate); transition: all 0.15s; position: relative; top: 3px; }
+  .tab-btn:hover { background: var(--border); color: var(--black); }
+  .tab-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  @media (max-width: 900px) { .tool-grid { grid-template-columns: 1fr; } .compare-grid { grid-template-columns: 1fr; } .tab-btn { padding: 10px 16px; font-size: 18px; } }
+</style>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head><body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand"><h2>Workshop</h2><p>AI Agent · Sơn</p></div>
+    <div class="nav-group">
+      <div class="nav-label">Modules</div>
+      <a href="../index.html" class="nav-link">← Hub</a>
+      <a href="../levels/level-1-understand.html" class="nav-link">Level 1 · Understand</a>
+      <a href="../levels/level-2-customize.html" class="nav-link">Level 2 · Customize</a>
+      <a href="../levels/level-3-build.html" class="nav-link">Level 3 · Build</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Phụ lục</div>
+      <a href="examples-personas.html" class="nav-link active">Ví Dụ Theo Persona</a>
+    </div>
+  </nav>
+  <main class="main">
+    <span class="tag tag-week">Phụ Lục</span>
+    <h1>Ví Dụ Theo<br>Persona</h1>
+    <p class="subtitle">Cùng công cụ, khác cách dùng — Tailored use cases cho Anh Sơn (Thiết kế nội thất) và Cún (Sinh viên AI)</p>
+
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Tại Sao Cần Tailored?</div>
+      <p style="font-size:20px;margin:0">AI tools giống nhau, nhưng <strong>context khác nhau = output khác nhau</strong>. Anh Sơn cần tăng tốc proposal cho khách hàng. Cún cần học sâu hơn và build portfolio. Hiểu cách áp dụng theo bối cảnh riêng = skill quan trọng nhất.</p>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('son')" id="tab-son"><i class="ph ph-hard-hat"></i> Anh Sơn</button>
+      <button class="tab-btn" onclick="switchTab('cun')" id="tab-cun"><i class="ph ph-graduation-cap"></i> Cún</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ANH SƠN -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="tab-panel active" id="panel-son">
+    <h2><i class="ph ph-hard-hat"></i> Anh Sơn — Thiết Kế Nội Thất</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/examples-son-interior.wav" type="audio/wav"></audio>
+
+    <h3>Công cụ & Use Cases</h3>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">Gemini (Gem)</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Tạo "Interior Design Consultant" — paste ảnh phòng → AI suggest bố trí, vật liệu, bảng màu theo budget</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Gemini + Vision</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Upload ảnh công trình → phân tích ánh sáng, tỷ lệ, điểm mạnh/yếu, suggest cải thiện</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Gemini + Imagen</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Từ brief text → generate hình render nội thất preview cho khách trước khi làm 3D chi tiết</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Google AI Studio</div>
+        <div class="tool-level">Level 2</div>
+        <div class="tool-desc">Structured output: brief khách → JSON {style, palette, materials[], furniture[], budget}</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">NotebookLM</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Upload catalog vật liệu + bảng giá → chatbot tra cứu nhanh, tạo podcast overview sản phẩm</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Flow / Automation</div>
+        <div class="tool-level">Level 2</div>
+        <div class="tool-desc">Brief khách (Google Form) → AI concept → budget estimate → email proposal tự động</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Antigravity</div>
+        <div class="tool-level">Level 3</div>
+        <div class="tool-desc">Build website portfolio dự án nội thất — gallery, landing page, contact form với agent system</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Nano (On-device)</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Đi khảo sát → chụp ảnh → AI nhận diện vật liệu, gợi ý sửa chữa tại chỗ (offline)</div>
+      </div>
+    </div>
+
+    <!-- GEM MẪU -->
+    <h3>Gem mẫu: Interior Design Consultant</h3>
+    <div class="code-block"><pre># Role
+Bạn là cố vấn thiết kế nội thất với 15 năm kinh nghiệm tại Việt Nam.
+
+# Expertise
+- Phong cách: minimalist, Scandinavian, industrial, Japandi, indochine
+- Thị trường: Việt Nam (vật liệu nội địa + nhập khẩu)
+- Budget range: 200tr - 2 tỷ VND
+
+# Rules
+- Luôn hỏi diện tích phòng + ngân sách TRƯỚC khi suggest
+- Ưu tiên vật liệu có sẵn tại VN
+- Mỗi suggestion kèm giá tham khảo (VND)
+- Format: Mood → Vật liệu → Nội thất → Ánh sáng → Budget
+- Khi nhận ảnh: phân tích điểm mạnh/yếu → suggest 3 phương án
+
+# Examples
+Input: "Phòng khách 30m², budget 150tr, thích minimalist"
+Output:
+🎨 Mood: Warm minimalist — tone trắng kem + gỗ sồi tự nhiên
+🧱 Vật liệu: Sàn gỗ SPC (35tr) + Sơn Dulux trắng ngà (5tr)
+🪑 Nội thất: Sofa L 2m4 (25tr) + Bàn trà gỗ (8tr) + Kệ TV (15tr)
+💡 Ánh sáng: Downlight âm trần 4000K (12tr) + Đèn sàn accent (3tr)
+💰 Tổng estimate: ~103tr (còn 47tr buffer cho decor + rèm)</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <div class="best-practice">
+      <div class="bp-label"><i class="ph ph-check-circle"></i> Tại sao Gem này hiệu quả</div>
+      <p style="font-size:20px;margin:0"><strong>Few-shot example</strong> với format rõ ràng (emoji + bullet) buộc AI output theo đúng cấu trúc. <strong>Constraints</strong> (hỏi trước, ưu tiên VN, kèm giá) loại bỏ output generic.</p>
+    </div>
+
+    <!-- USE CASES CHI TIẾT -->
+    <h3>Use Cases chi tiết</h3>
+
+    <div class="usecase">
+      <div class="usecase-title">① Gemini Vision — Phân tích ảnh phòng · Level 1</div>
+      <div class="code-block"><pre>Phân tích ảnh phòng khách này. Cho biết:
+1. Diện tích ước tính
+2. Ánh sáng tự nhiên (tốt / trung bình / yếu)
+3. Điểm mạnh cần giữ
+4. Điểm yếu cần cải thiện
+5. 3 phương án thiết kế (budget thấp / trung / cao)</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+      <div class="insight"><strong>Tiết kiệm:</strong> 30-60 phút khảo sát ban đầu. Có phân tích sơ bộ trước khi đến công trình.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">② AI Studio — Structured Output · Level 2</div>
+      <p style="font-size:17px;color:var(--slate)">System prompt: "Nhận brief khách hàng, output JSON" → Kết quả:</p>
+      <div class="code-block"><pre>{
+  "style": "Japandi",
+  "colorPalette": ["#F5F0EB", "#2C2C2C", "#8B7355"],
+  "materials": [
+    {"name": "Sàn gỗ sồi", "supplier": "An Cường", "pricePerM2": 450000}
+  ],
+  "furniture": [
+    {"item": "Sofa 3 chỗ", "brand": "JYSK", "price": 15000000}
+  ],
+  "totalEstimate": 120000000,
+  "timeline": "6-8 tuần"
+}</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+      <div class="insight"><strong>Ứng dụng:</strong> Copy JSON → paste spreadsheet quotation → gửi khách. Chuẩn hóa quy trình báo giá.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">③ Imagen — Render Preview · Level 1</div>
+      <div class="code-block"><pre>Modern minimalist living room, 30sqm, white oak flooring,
+cream walls, L-shaped grey sofa, round wooden coffee table,
+track lighting 4000K, large window with sheer curtains,
+Vietnamese tropical plants, photorealistic interior photography,
+natural daylight</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+      <div class="insight"><strong>Tiết kiệm:</strong> Khách xem preview nhanh trước khi invest vào 3D render chi tiết. Tiết kiệm 1-2 ngày + chi phí render.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">④ NotebookLM — Tra cứu vật liệu · Level 1</div>
+      <p style="font-size:17px;color:var(--slate)"><strong>Upload:</strong> Catalog An Cường 2026 (PDF) + Bảng giá nội thất (Excel) + Sổ tay thi công</p>
+      <p style="font-size:17px;color:var(--slate)"><strong>Hỏi:</strong> "Sàn gỗ nào phù hợp phòng tắm, budget dưới 500k/m²?"</p>
+      <div class="insight"><strong>Kết quả:</strong> AI tra trong catalog → suggest đúng mã sản phẩm + giá + specs kỹ thuật. Không cần lật 200 trang catalog.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">⑤ Flow — Automation Proposal · Level 2</div>
+      <div style="margin:12px 0">
+        <div class="pipeline-step"><div class="step-num">1</div><div class="step-text">Khách gửi brief (Google Form)</div></div>
+        <div class="step-arrow">↓</div>
+        <div class="pipeline-step"><div class="step-num">2</div><div class="step-text">AI đọc brief → tạo concept text + palette màu</div></div>
+        <div class="step-arrow">↓</div>
+        <div class="pipeline-step"><div class="step-num">3</div><div class="step-text">Generate moodboard (Imagen)</div></div>
+        <div class="step-arrow">↓</div>
+        <div class="pipeline-step"><div class="step-num">4</div><div class="step-text">Estimate budget (Structured Output)</div></div>
+        <div class="step-arrow">↓</div>
+        <div class="pipeline-step"><div class="step-num">5</div><div class="step-text">Compile proposal (Google Docs)</div></div>
+        <div class="step-arrow">↓</div>
+        <div class="pipeline-step"><div class="step-num">6</div><div class="step-text">Email cho khách (Gmail) + Notify Sơn (Telegram)</div></div>
+      </div>
+      <div class="insight"><strong>Tiết kiệm:</strong> Từ 3-4 giờ manual → 15 phút review + gửi.</div>
+    </div>
+
+    <!-- WORKFLOW MẪU -->
+    <h3>Workflow mẫu: /proposal</h3>
+    <div class="code-block"><pre>---
+description: Tạo proposal thiết kế nội thất từ brief khách hàng
+---
+
+# /proposal — Interior Design Proposal
+
+## Step 1: Analyze Brief
+Đọc brief khách → Extract: diện tích, phong cách, budget, timeline, yêu cầu đặc biệt.
+
+## Step 2: Mood & Concept
+Tạo concept board text: palette màu, vật liệu chính, mood keywords, references.
+
+## Step 3: Space Planning
+Suggest bố trí không gian → danh sách đồ nội thất + kích thước + vị trí.
+
+## Step 4: Budget Breakdown
+Chia budget: Vật liệu 40% · Nội thất 35% · Thi công 20% · Buffer 5%.
+
+## Step 5: Generate Proposal
+Tổng hợp thành proposal Markdown → chuyển PDF gửi khách.</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    </div><!-- /panel-son -->
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- CÚN -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="tab-panel" id="panel-cun">
+    <h2><i class="ph ph-graduation-cap"></i> Cún — Sinh Viên Học AI</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/examples-cun-student.wav" type="audio/wav"></audio>
+
+    <h3>Công cụ & Use Cases</h3>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">Gemini (Gem)</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Tạo "AI Tutor" — Socratic method, hỏi ngược thay vì cho đáp án thẳng. Dùng analogy đời thường</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Gemini + PDF</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Upload paper nghiên cứu → tóm tắt: Problem → Method → Results → Limitations</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Google AI Studio</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Playground thử nghiệm: so sánh Flash vs Pro, test temperature/top-k/top-p → hiểu model behavior</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">AI Studio (API)</div>
+        <div class="tool-level">Level 2</div>
+        <div class="tool-desc">Build mini chatbot RAG từ ghi chú bài giảng — project thực hành embeddings + similarity search</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">NotebookLM</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Upload bài giảng + textbook → tạo podcast 2 người thảo luận → nghe khi đi bus = passive learning</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Gemini + Code</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Paste Python/notebook → AI explain, debug, suggest optimization. Học coding nhanh hơn 3x</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Antigravity</div>
+        <div class="tool-level">Level 3</div>
+        <div class="tool-desc">Build portfolio website + research agent: /paper-review → AI đọc, tóm tắt, quiz, lưu notes</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Nano (On-device)</div>
+        <div class="tool-level">Level 1</div>
+        <div class="tool-desc">Chụp whiteboard tại lớp → AI OCR + restructure thành notes có format → sync Google Docs</div>
+      </div>
+    </div>
+
+    <!-- GEM MẪU -->
+    <h3>Gem mẫu: AI Tutor (Socratic)</h3>
+    <div class="code-block"><pre># Role
+Bạn là tutor AI/ML theo phương pháp Socratic — KHÔNG cho đáp án thẳng.
+
+# Teaching Style
+- Luôn hỏi ngược: "Bạn hiểu concept này thế nào trước khi mình giải thích?"
+- Dùng analogy đời thường:
+  - Neural network = hệ thống đường giao thông
+  - Gradient descent = lăn bi xuống đồi
+  - Overfitting = học thuộc đề cũ mà không hiểu bài
+- Chia concept phức tạp thành 3 bước đơn giản
+- Khi student stuck → cho hint, KHÔNG cho solution
+
+# Format
+- Explanation: Max 5 câu, dùng bullet point
+- Code: Kèm comment giải thích từng dòng quan trọng
+- Math: LaTeX + giải thích bằng lời
+- Luôn kết thúc bằng 1 câu hỏi kiểm tra hiểu biết
+
+# Subjects
+Machine Learning, Deep Learning, NLP, Computer Vision, Statistics, Python
+
+# Anti-patterns
+- KHÔNG viết code hoàn chỉnh cho bài tập (chỉ pseudocode + hints)
+- KHÔNG dùng jargon không giải thích
+- KHÔNG nói "đơn giản thôi" khi student đang struggle</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <div class="best-practice">
+      <div class="bp-label"><i class="ph ph-check-circle"></i> Tại sao Gem này hiệu quả</div>
+      <p style="font-size:20px;margin:0"><strong>Socratic method</strong> buộc student chủ động suy nghĩ thay vì passive copy. <strong>Anti-patterns</strong> ngăn AI "giúp quá nhiều" — cái bẫy phổ biến nhất khi dùng AI để học.</p>
+    </div>
+
+    <!-- USE CASES CHI TIẾT -->
+    <h3>Use Cases chi tiết</h3>
+
+    <div class="usecase">
+      <div class="usecase-title">① Gemini — Explain Complex Concept · Level 1</div>
+      <div class="code-block"><pre>Giải thích Transformer attention mechanism cho người mới.
+Dùng analogy đời thường.
+Sau khi giải thích, cho 1 ví dụ bằng Python pseudocode.</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+      <div class="insight"><strong>Kết quả:</strong> AI giải thích bằng analogy "đọc sách và highlight" — attention = quyết định từ nào quan trọng nhất trong câu, giống cách highlight textbook.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">② AI Studio — So sánh Model · Level 1</div>
+      <p style="font-size:17px;color:var(--slate)">Bài tập tự thực hành:</p>
+      <div style="margin:12px 0">
+        <div class="pipeline-step"><div class="step-num">1</div><div class="step-text">Mở AI Studio → chọn cùng 1 prompt</div></div>
+        <div class="pipeline-step"><div class="step-num">2</div><div class="step-text">Test với Gemini Flash (nhanh, rẻ) vs Gemini Pro (chính xác hơn)</div></div>
+        <div class="pipeline-step"><div class="step-num">3</div><div class="step-text">Thay đổi temperature: 0.0 → 0.5 → 1.0 → 2.0</div></div>
+        <div class="pipeline-step"><div class="step-num">4</div><div class="step-text">Quan sát: output khác nhau thế nào?</div></div>
+        <div class="pipeline-step"><div class="step-num">5</div><div class="step-text">Kết luận: khi nào dùng Flash vs Pro? Temperature nào cho task nào?</div></div>
+      </div>
+      <div class="insight"><strong>Học được:</strong> Hiểu trực quan về model parameters thay vì chỉ đọc lý thuyết. Skill phỏng vấn AI engineers hay hỏi.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">③ NotebookLM — Passive Learning · Level 1</div>
+      <p style="font-size:17px;color:var(--slate)"><strong>Upload:</strong> Slide bài giảng Deep Learning (PDF) + Chapter 6 textbook Goodfellow (PDF) + Ghi chú tay scan (ảnh)</p>
+      <p style="font-size:17px;color:var(--slate)"><strong>Output:</strong> Podcast 15 phút — 2 "người" thảo luận về Backpropagation bằng tiếng Việt</p>
+      <div class="insight"><strong>Nghe khi:</strong> Đi bus, tập gym, nấu ăn = review bài không cần ngồi bàn. Passive learning hiệu quả nhất cho retention.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">④ AI Studio API — Build Mini RAG · Level 2</div>
+      <div class="code-block"><pre># Upload ghi chú bài giảng → chatbot trả lời dựa trên nội dung
+
+import google.generativeai as genai
+
+# 1. Load ghi chú bài giảng
+notes = load_documents("notes/deep-learning/")
+
+# 2. Tạo embeddings
+embeddings = genai.embed_content(notes)
+
+# 3. Khi hỏi → tìm chunk liên quan → trả lời
+def ask(question):
+    relevant = search(embeddings, question)
+    return genai.generate(
+        context=relevant,
+        prompt=question
+    )
+
+# 4. Test
+ask("Backpropagation hoạt động thế nào?")
+# → AI trả lời DỰA TRÊN ghi chú của mình, không hallucinate</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+      <div class="insight"><strong>Học được:</strong> RAG pipeline thực tế, embeddings, similarity search — đều là skill hot trên thị trường việc làm AI.</div>
+    </div>
+
+    <div class="usecase">
+      <div class="usecase-title">⑤ Antigravity — Research Agent System · Level 3</div>
+      <div class="code-block"><pre>.research-agent/
+├── GEMINI.md              # Rules: academic rigor, citation format
+├── agents/
+│   ├── paper-reader.md    # Đọc + tóm tắt paper
+│   ├── code-reviewer.md   # Review implementation
+│   └── writer.md          # Viết report/thesis section
+├── skills/
+│   ├── ml-concepts/       # Kiến thức ML cơ bản
+│   ├── pytorch/           # PyTorch patterns
+│   └── academic-writing/  # Cách viết academic
+└── workflows/
+    ├── paper-review.md    # /paper-review
+    └── experiment.md      # /experiment → setup → run → log → analyze</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+      <div class="insight"><strong>Ứng dụng:</strong> Mỗi khi đọc paper mới → <code>/paper-review</code> → AI tóm tắt + quiz + lưu note. Sau 1 học kỳ tích lũy knowledge base cá nhân.</div>
+    </div>
+
+    <!-- WORKFLOW MẪU -->
+    <h3>Workflow mẫu: /paper-review</h3>
+    <div class="code-block"><pre>---
+description: Review và tóm tắt paper nghiên cứu AI/ML
+---
+
+# /paper-review — AI Paper Review
+
+## Step 1: Extract Structure
+Đọc paper → Tách: Title, Authors, Year, Venue, Abstract, Key Terms.
+
+## Step 2: Summarize (5 bullets)
+1. Problem — Bài toán gì?
+2. Method — Giải quyết bằng cách nào?
+3. Key Innovation — Cái mới so với trước?
+4. Results — Kết quả ra sao? (metrics cụ thể)
+5. Limitations — Hạn chế gì?
+
+## Step 3: Connect
+Link đến related papers/concepts đã học. "Paper này build on top of [X]".
+
+## Step 4: Quiz
+Tạo 3 câu hỏi tự kiểm tra:
+- 1 câu factual (nhớ)
+- 1 câu conceptual (hiểu)
+- 1 câu application (áp dụng)
+
+## Step 5: Note
+Output: 1 trang note Markdown → lưu vào thư mục research/[year]/</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    </div><!-- /panel-cun -->
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SO SÁNH -->
+    <!-- ═══════════════════════════════════════ -->
+    <h2><i class="ph ph-chart-bar"></i> So Sánh 2 Persona</h2>
+
+    <table>
+      <thead>
+        <tr><th>Chiều</th><th><i class="ph ph-hard-hat"></i> Anh Sơn (Nội thất)</th><th><i class="ph ph-graduation-cap"></i> Cún (SV AI)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Mục tiêu</strong></td><td>Tăng tốc proposal + impress khách</td><td>Học sâu + build portfolio</td></tr>
+        <tr><td><strong>Gem chính</strong></td><td>Interior Consultant</td><td>AI Tutor (Socratic)</td></tr>
+        <tr><td><strong>AI Studio</strong></td><td>Structured output: brief → quote</td><td>Playground: hiểu model behavior</td></tr>
+        <tr><td><strong>Vision / Imagen</strong></td><td>Render preview, phân tích phòng</td><td>OCR whiteboard, diagram analysis</td></tr>
+        <tr><td><strong>NotebookLM</strong></td><td>Tra cứu catalog vật liệu</td><td>Podcast bài giảng = passive learning</td></tr>
+        <tr><td><strong>Antigravity</strong></td><td>Website portfolio + auto proposal</td><td>Research agent + project coding</td></tr>
+        <tr><td><strong>Nano</strong></td><td>Nhận diện vật liệu tại công trình</td><td>OCR ghi bảng tại lớp</td></tr>
+        <tr><td><strong>Level focus</strong></td><td>Level 1 + 2 (practical tools)</td><td>Level 1 + 2 + 3 (build systems)</td></tr>
+        <tr><td><strong>ROI rõ nhất</strong></td><td>Tiết kiệm 3-4h / proposal</td><td>Học nhanh 2-3x, portfolio sẵn sàng</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight">
+      <strong>Key takeaway:</strong> Cùng 1 bộ công cụ (Gemini, AI Studio, NotebookLM, Antigravity, Nano) nhưng <strong>context khác = value khác</strong>. Đây chính là bài học core của Level 1 — Context Engineering: output quality phụ thuộc vào context bạn cung cấp, không phải model bạn chọn.
+    </div>
+
+    <div class="bottom-nav">
+      <a href="../levels/level-3-build.html">← Level 3: Build</a>
+      <a href="../index.html">Hub →</a>
+    </div>
+  </main>
+</div>
+<script>
+function copyCode(e){e.stopPropagation();const p=e.target.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(p.textContent);const b=e.target;b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)}
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+</script>
+</body></html>

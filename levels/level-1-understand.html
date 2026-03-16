@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 1 — Understand</title>
+<link rel="stylesheet" href="../../hoc-vien/shared.css">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head><body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand"><h2>Workshop</h2><p>AI Agent · Sơn</p></div>
+    <div class="nav-group">
+      <div class="nav-label">Modules</div>
+      <a href="../index.html" class="nav-link">← Hub</a>
+      <a href="level-1-understand.html" class="nav-link active">Level 1 · Understand</a>
+      <a href="level-2-customize.html" class="nav-link">Level 2 · Customize</a>
+      <a href="level-3-build.html" class="nav-link">Level 3 · Build</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Phụ lục</div>
+      <a href="../appendix/examples-personas.html" class="nav-link">Ví Dụ Theo Persona</a>
+    </div>
+  </nav>
+  <main class="main">
+    <span class="tag tag-week">Level 1</span>
+    <h1>Understand</h1>
+    <p class="subtitle">Nền tảng · Context Engineering · Gemini Gems · Prompt Patterns</p>
+
+    <div style="background:var(--bg-muted);border:1px solid var(--border);padding:16px 20px;margin:16px 0">
+      <div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--slate);margin-bottom:8px"><i class="ph ph-headphones"></i> Podcast — Nghe tổng quan Level 1</div>
+      <audio controls preload="none" style="width:100%">
+        <source src="../audio/Biến AI thành trợ lý bằng Gems.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <div class="objectives">
+      <div class="objectives-title"><i class="ph ph-target"></i> Sau level này, bạn sẽ</div>
+      <div class="objective"><div class="obj-icon">1</div> Hiểu tại sao context quan trọng hơn model</div>
+      <div class="objective"><div class="obj-icon">2</div> Tạo Gemini Gem đầu tiên cho công việc thật</div>
+      <div class="objective"><div class="obj-icon">3</div> Master 5 prompt patterns quan trọng nhất</div>
+      <div class="objective"><div class="obj-icon">4</div> Nhận diện anti-patterns phổ biến</div>
+    </div>
+
+    <!-- SESSION 1.1 -->
+    <h2>1.1 — Tại Sao Agent?</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-1.1-context-engineering.wav" type="audio/wav"></audio>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Context Engineering</div>
+      <p style="font-size:20px;margin:0"><strong>Output Quality = f(Model × Context × Constraints)</strong>. Cùng 1 model, nhưng: Không context → 40% · Prompt tốt → 60% · System instructions → 75% · Agent system → 90%+. Càng nhiều context phù hợp → output càng chính xác.</p>
+    </div>
+
+    <h3>2 Nguyên Lý Cốt Lõi</h3>
+    <table>
+      <thead><tr><th>Nguyên lý</th><th>Giải thích</th><th>Ví dụ</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Context Window = Bộ nhớ tạm</strong></td><td>AI không nhớ gì ngoài cuộc hội thoại. Custom instructions = "nhồi" context trước mỗi câu hỏi.</td><td>Gem tự inject brand voice vào mọi request</td></tr>
+        <tr><td><strong>Constraints > Freedom</strong></td><td>AI cho output tốt hơn khi bị giới hạn (tone, format, length, audience).</td><td>"Viết gì cũng được" → tệ · "3 bullet, max 15 từ" → tốt</td></tr>
+      </tbody>
+    </table>
+
+    <div class="reflection">
+      <div class="reflection-label"><i class="ph ph-pencil-simple"></i> Bài tập — Context Audit</div>
+      <p style="font-size:17px;color:var(--slate)">Chọn 1 task bạn hay dùng AI. Liệt kê context bạn đang cung cấp vs thiếu:</p>
+      <textarea class="reflection-space" style="min-height:100px" placeholder="Task: ...&#10;Context đang có: ...&#10;Context đang thiếu: ...&#10;Prompt viết lại: ..."></textarea>
+    </div>
+
+    <!-- SESSION 1.2 -->
+    <h2>1.2 — Gemini Gems</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-1.2-gemini-gems.wav" type="audio/wav"></audio>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Gem là gì?</div>
+      <p style="font-size:20px;margin:0">Gem = <strong>một version Gemini được customize</strong> với system instructions cố định. Khi dùng Gem, AI luôn tuân theo instructions đó mà không cần nhắc lại. Concept giống nhau trên mọi platform — hiểu 1 → dùng được tất cả.</p>
+    </div>
+
+    <h3>Tương đương đa nền tảng</h3>
+    <table>
+      <thead><tr><th>Platform</th><th>Tên gọi</th><th>Cách hoạt động</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Gemini</strong></td><td>Gem</td><td>System instructions, gắn trong Gemini app</td></tr>
+        <tr><td><strong>ChatGPT</strong></td><td>Custom GPT</td><td>System prompt + optional tools</td></tr>
+        <tr><td><strong>Claude</strong></td><td>Project / Style</td><td>System prompt + project knowledge</td></tr>
+        <tr><td><strong>Poe</strong></td><td>Bot</td><td>System prompt + model selection</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Template: Tạo Gem</h3>
+    <div class="code-block"><pre># Role
+Bạn là copywriter chuyên nghiệp cho [TÊN CÔNG TY].
+
+# Brand Voice
+- Tone: [Chuyên nghiệp / Thân thiện / Mạnh mẽ]
+- Audience: [Mô tả khách hàng mục tiêu]
+- Tránh: [Từ ngữ nào không dùng]
+- Luôn: [Đặc điểm nào phải có]
+
+# Format Rules
+- Tiêu đề: Max 8 từ, có action verb
+- Body: Max 3 đoạn, mỗi đoạn max 3 câu
+- CTA: Luôn kết thúc bằng 1 call-to-action
+
+# Examples
+[2-3 ví dụ output mẫu — PHẦN QUAN TRỌNG NHẤT]</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <div class="best-practice">
+      <div class="bp-label"><i class="ph ph-check-circle"></i> Best Practice</div>
+      <p style="font-size:20px;margin:0"><strong>Few-shot examples</strong> là yếu tố tạo chất lượng lớn nhất. AI bắt chước style từ examples tốt hơn bất kỳ instruction nào.</p>
+    </div>
+
+    <h3>Pattern Library: Các Gem hữu ích</h3>
+    <table>
+      <thead><tr><th>Gem</th><th>Mục đích</th><th>System Instructions chính</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Meeting Summarizer</strong></td><td>Tóm tắt meeting</td><td>Format: Decisions / Action Items / Open Questions</td></tr>
+        <tr><td><strong>Code Reviewer</strong></td><td>Review PR</td><td>Checklist: Security, Performance, Readability</td></tr>
+        <tr><td><strong>Email Drafter</strong></td><td>Viết email</td><td>Tone + Length theo context (internal/external)</td></tr>
+        <tr><td><strong>Data Analyzer</strong></td><td>Phân tích data</td><td>Insight → So What → Recommendation</td></tr>
+        <tr><td><strong>Learning Coach</strong></td><td>Giải thích concept</td><td>Socratic method, dùng analogy</td></tr>
+      </tbody>
+    </table>
+
+    <div class="reflection">
+      <div class="reflection-label"><i class="ph ph-pencil-simple"></i> Bài tập — Tạo Gem đầu tiên</div>
+      <p style="font-size:17px;color:var(--slate)">Tạo 1 Gem theo template trên, test 3 câu hỏi, so sánh với vanilla Gemini:</p>
+      <textarea class="reflection-space" style="min-height:100px" placeholder="Gem name: ...&#10;Role: ...&#10;Test prompt 1: ...&#10;Output quality vs vanilla: ..."></textarea>
+    </div>
+
+    <!-- SESSION 1.3 -->
+    <h2>1.3 — 5 Prompt Patterns</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-1.3-prompt-patterns.wav" type="audio/wav"></audio>
+
+    <h3>Pattern 1: Role → Task → Constraints → Format</h3>
+    <div class="code-block"><pre>You are a [ROLE] with expertise in [DOMAIN].
+Your task is to [SPECIFIC TASK].
+Constraints: [BOUNDARIES]
+Output format: [STRUCTURE]</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Pattern 2: Chain of Thought (CoT)</h3>
+    <div class="code-block"><pre>Think step by step:
+1. First, analyze [X]
+2. Then, consider [Y]
+3. Finally, recommend [Z]
+Show your reasoning at each step.</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Pattern 3: Few-Shot Learning</h3>
+    <div class="code-block"><pre>Here are examples of what I want:
+Input: [example 1] → Output: [example 1]
+Input: [example 2] → Output: [example 2]
+Now do this: Input: [new input] → Output: ?</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Pattern 4: Negative Prompting</h3>
+    <div class="code-block"><pre>DO NOT:
+- Use generic phrases like "in today's world"
+- Write more than 3 paragraphs
+- Include jargon without explanation</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Pattern 5: Iterative Refinement</h3>
+    <div class="code-block"><pre>[Prompt ban đầu]
+→ "Kết quả chưa đúng vì [lý do]. Hãy chỉnh [phần cụ thể]"
+→ "Tốt hơn, nhưng [X] cần thay đổi. Hãy [Y]"</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Anti-Patterns phổ biến</h3>
+    <table>
+      <thead><tr><th><i class="ph ph-x-circle"></i> Anti-Pattern</th><th><i class="ph ph-check-circle"></i> Thay bằng</th></tr></thead>
+      <tbody>
+        <tr><td>"Viết cho tốt"</td><td>"Viết 3 bullet, mỗi bullet theo XYZ, cho audience là..."</td></tr>
+        <tr><td>Copy paste 5 trang context</td><td>Chọn lọc relevant nhất, tối đa 1 trang</td></tr>
+        <tr><td>Hỏi lại cùng 1 câu</td><td>Thay đổi constraints hoặc cho examples</td></tr>
+        <tr><td>Tin 100% output đầu tiên</td><td>Luôn iterate ít nhất 1 lần</td></tr>
+        <tr><td>1 prompt cho mọi task</td><td>Tạo Gem/template cho recurring tasks</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight" style="margin-top:40px">
+      <strong><i class="ph ph-push-pin"></i> Xem ví dụ thực tế:</strong> Gem "Interior Design Consultant" cho Anh Sơn · Gem "AI Tutor" cho Cún → <a href="../appendix/examples-personas.html" style="color:var(--black);font-weight:700">Ví Dụ Theo Persona</a>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="../index.html">← Hub</a>
+      <a href="level-2-customize.html">Level 2: Customize →</a>
+    </div>
+  </main>
+</div>
+<script>function copyCode(e){e.stopPropagation();const p=e.target.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(p.textContent);const b=e.target;b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)}</script>
+</body></html>

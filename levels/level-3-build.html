@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 3 — Build</title>
+<link rel="stylesheet" href="../../hoc-vien/shared.css">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head><body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand"><h2>Workshop</h2><p>AI Agent · Sơn</p></div>
+    <div class="nav-group">
+      <div class="nav-label">Modules</div>
+      <a href="../index.html" class="nav-link">← Hub</a>
+      <a href="level-1-understand.html" class="nav-link">Level 1 · Understand</a>
+      <a href="level-2-customize.html" class="nav-link">Level 2 · Customize</a>
+      <a href="level-3-build.html" class="nav-link active">Level 3 · Build</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Phụ lục</div>
+      <a href="../appendix/examples-personas.html" class="nav-link">Ví Dụ Theo Persona</a>
+    </div>
+  </nav>
+  <main class="main">
+    <span class="tag tag-week">Level 3</span>
+    <h1>Build</h1>
+    <p class="subtitle">Agent System Architecture · Skill Design · Orchestration · Advanced Patterns</p>
+
+    <div style="background:var(--bg-muted);border:1px solid var(--border);padding:16px 20px;margin:16px 0">
+      <div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--slate);margin-bottom:8px"><i class="ph ph-headphones"></i> Podcast — Nghe tổng quan Level 3</div>
+      <audio controls preload="none" style="width:100%">
+        <source src="../audio/Xây dựng hệ thống đa AI Agent.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <div class="objectives">
+      <div class="objectives-title"><i class="ph ph-target"></i> Sau level này, bạn sẽ</div>
+      <div class="objective"><div class="obj-icon">1</div> Hiểu kiến trúc Agent System hoàn chỉnh (Agents + Skills + Workflows)</div>
+      <div class="objective"><div class="obj-icon">2</div> Tự thiết kế .agent/ system cho project riêng</div>
+      <div class="objective"><div class="obj-icon">3</div> Áp dụng 5 Advanced Patterns: Routing, Tiered Rules, Socratic Gate...</div>
+      <div class="objective"><div class="obj-icon">4</div> Biết cách scale hệ thống từ 1 rules file → 20+ agents</div>
+    </div>
+
+    <!-- 3.1 ARCHITECTURE -->
+    <h2>3.1 — Agent System Architecture</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-3.1-agent-architecture.wav" type="audio/wav"></audio>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Case Study: Antigravity Kit</div>
+      <p style="font-size:20px;margin:0">Hệ thống thực tế đang chạy production: <strong>20 Agents · 60 Skills · 11 Workflows</strong>. Key insight: không phải "1 AI biết hết" mà là "nhiều AI chuyên gia, mỗi AI biết rõ lĩnh vực mình" — giống cách team thật hoạt động.</p>
+    </div>
+
+    <h3>Cấu trúc thư mục</h3>
+    <div class="code-block"><pre>.agent/
+├── ARCHITECTURE.md          # Bản đồ toàn hệ thống
+├── agents/                  # 20 Specialist Agents
+│   ├── orchestrator.md      # Tổng chỉ huy, phân task
+│   ├── frontend-specialist.md
+│   ├── backend-specialist.md
+│   ├── security-auditor.md
+│   ├── debugger.md
+│   └── ... (15 agents khác)
+├── skills/                  # 60 Skills (kiến thức module)
+│   ├── react/SKILL.md
+│   ├── clean-code/SKILL.md
+│   ├── brainstorming/SKILL.md
+│   └── ... (57 skills khác)
+├── workflows/               # 11 Slash Commands
+│   ├── ship.md
+│   ├── debug.md
+│   └── ...
+├── rules/                   # Global Rules (luôn active)
+└── scripts/                 # Automation scripts</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Flow khi nhận request</h3>
+    <div class="code-block"><pre>User Request: "Build a login page"
+         │
+         ▼
+┌──────────────────────┐
+│  GEMINI.md (Rules)   │ ← Luôn đọc trước
+│  Step 1: Classify    │
+│  Step 2: Route       │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  Intelligent Router  │ ← Phân tích domain
+│  → Frontend task     │
+│  → Select agent:     │
+│    frontend-specialist│
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  frontend-specialist │ ← Đọc agent persona
+│  → Load skills:      │
+│    - react            │
+│    - frontend-design  │
+│    - clean-code       │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  Execute with all    │
+│  context loaded      │
+└──────────────────────┘</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>3 Components chi tiết</h3>
+
+    <h4>1. Agent = Vai trò + Chuyên môn + Quy tắc</h4>
+    <div class="code-block"><pre># frontend-specialist.md
+
+---
+name: Frontend Specialist
+skills: [react, frontend-design, clean-code, tailwind]
+---
+
+## Identity
+Bạn là chuyên gia frontend, 10+ năm React, TypeScript.
+
+## Rules
+- Luôn dùng TypeScript strict mode
+- Component max 150 dòng
+- Performance-first: lazy load, memoize
+- Accessibility: mọi element có aria labels
+
+## When Activated
+- UI, components, styling, responsive
+- KHÔNG xử lý backend, database</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h4>2. Skill = Kiến thức chuyên sâu, tái sử dụng</h4>
+    <div class="code-block"><pre># skills/react/SKILL.md
+
+---
+name: React Best Practices
+description: React 19 patterns
+---
+
+## Component Patterns
+- Prefer function components
+- Use composition over inheritance
+
+## State Management
+- Local: useState | Complex: useReducer
+- Global: Zustand | Small scope: Context
+
+## Performance
+- React.memo only when measured
+- useMemo/useCallback only when necessary</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h4>3. GEMINI.md = Bộ não trung tâm</h4>
+    <div class="code-block"><pre># GEMINI.md — Central Brain
+
+## Step 1: Request Classifier
+| Type         | Keywords           | Action           |
+|--------------|--------------------|------------------|
+| QUESTION     | "what is", "explain"| Text Response   |
+| SIMPLE CODE  | "fix", "add"       | Inline Edit      |
+| COMPLEX CODE | "build", "create"  | Full Agent Pipeline |
+
+## Step 2: Intelligent Routing
+Analyze request → Select agent → Load skills → Execute
+
+## Global Rules (Always Active)
+- Clean code standards
+- Test before commit
+- Never push secrets</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <!-- 3.2 DESIGN YOUR OWN -->
+    <h2>3.2 — 5-Step Framework</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-3.2-design-framework.wav" type="audio/wav"></audio>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Thiết kế Agent System cho project riêng</div>
+      <p style="font-size:20px;margin:0">Không cần 20 agents ngày đầu. Bắt đầu nhỏ, iterate theo nhu cầu thực. Framework 5 bước giúp bạn xác định đúng agents, skills, workflows cần thiết.</p>
+    </div>
+
+    <table>
+      <thead><tr><th>Step</th><th>Hành động</th><th>Kết quả</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. Identify Roles</strong></td><td>Ai trong team xử lý task gì? Task nào bạn chuyển qua lại giữa "mũ" khác nhau?</td><td>Mỗi "role" = 1 Agent</td></tr>
+        <tr><td><strong>2. List Knowledge</strong></td><td>Mỗi agent cần biết gì? React patterns, design system, a11y...</td><td>Mỗi "domain" = 1 Skill</td></tr>
+        <tr><td><strong>3. Map Processes</strong></td><td>Quy trình nào lặp? Deploy, review, handoff...</td><td>Mỗi "process" = 1 Workflow</td></tr>
+        <tr><td><strong>4. Write Router</strong></td><td>Request nào → agent nào? Keyword mapping.</td><td>GEMINI.md routing table</td></tr>
+        <tr><td><strong>5. Start Small</strong></td><td>1 GEMINI.md + 2-3 skills + 1 workflow → dùng 2 tuần → thêm dần</td><td>Iterate based on real needs</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warning"><strong><i class="ph ph-warning"></i> KHÔNG</strong> cố xây 20 agents ngày đầu. Bắt đầu: 1 GEMINI.md + 2-3 skills + 1 workflow. Dùng 2 tuần → thêm dần.</div>
+
+    <h3>Template Agent System</h3>
+    <div class="code-block"><pre>my-project/
+├── GEMINI.md                    # Bộ não trung tâm
+├── .agent/
+│   ├── agents/
+│   │   ├── [role-1].md           # Agent 1
+│   │   └── [role-2].md           # Agent 2
+│   ├── skills/
+│   │   ├── [domain-1]/SKILL.md   # Skill 1
+│   │   └── [domain-2]/SKILL.md   # Skill 2
+│   └── workflows/
+│       └── [process-1].md        # Workflow 1</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <div class="reflection">
+      <div class="reflection-label"><i class="ph ph-pencil-simple"></i> Bài tập — Design Sprint</div>
+      <p style="font-size:17px;color:var(--slate)">Thiết kế agent system cho project của bạn:</p>
+      <textarea class="reflection-space" style="min-height:150px" placeholder="Roles (agents): ...&#10;&#10;Knowledge domains (skills): ...&#10;&#10;Repeatable processes (workflows): ...&#10;&#10;Routing table: request keyword → agent → skills"></textarea>
+    </div>
+
+    <!-- 3.3 ADVANCED PATTERNS -->
+    <h2>3.3 — Advanced Patterns</h2>
+    <audio controls preload="none" style="width:100%;margin:8px 0 16px"><source src="../audio/session-3.3-advanced-patterns.wav" type="audio/wav"></audio>
+
+    <h3>Pattern 1: Skill Loading Protocol</h3>
+    <div class="code-block"><pre>Agent activated
+    │
+    ▼
+Check frontmatter → skills: [react, clean-code]
+    │
+    ▼
+Read SKILL.md (INDEX only, NOT all files)
+    │
+    ▼
+Only read sub-sections matching current task
+    │
+    ▼
+Apply PRINCIPLES → Code</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+    <div class="best-practice">
+      <div class="bp-label"><i class="ph ph-check-circle"></i> Key</div>
+      <p style="font-size:20px;margin:0">Selective reading — KHÔNG đọc hết tất cả skills, chỉ đọc phần relevant. Tránh context overflow.</p>
+    </div>
+
+    <h3>Pattern 2: Tiered Rules (Priority)</h3>
+    <div class="code-block"><pre>P0: GEMINI.md (project-level)     ← luôn áp dụng
+  │
+  P1: Agent .md (role-level)      ← khi agent active
+    │
+    P2: SKILL.md (domain-level)   ← khi skill loaded
+
+Khi conflict: P0 > P1 > P2</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+
+    <h3>Pattern 3: Socratic Gate</h3>
+    <div class="why">
+      <div class="why-label"><i class="ph ph-book-open"></i> Tại sao</div>
+      <p style="font-size:20px;margin:0">Tránh AI chạy ngay, build sai thứ. Buộc AI <strong>hỏi trước</strong>, xác nhận scope rồi mới làm.</p>
+    </div>
+    <table>
+      <thead><tr><th>Request Type</th><th>Strategy</th></tr></thead>
+      <tbody>
+        <tr><td><strong>New Feature</strong></td><td>ASK minimum 3 questions first</td></tr>
+        <tr><td><strong>Bug Fix</strong></td><td>Confirm understanding first</td></tr>
+        <tr><td><strong>Vague Request</strong></td><td>Ask Purpose, Users, Scope</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Pattern 4: Slash Command Annotations</h3>
+    <table>
+      <thead><tr><th>Annotation</th><th>Hành vi</th></tr></thead>
+      <tbody>
+        <tr><td><code>// turbo</code></td><td>Auto-run step ngay sau (1 step)</td></tr>
+        <tr><td><code>// turbo-all</code></td><td>Auto-run ALL steps trong workflow</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Pattern 5: Multi-Agent Orchestration</h3>
+    <div class="code-block"><pre>User: "Build a complete feature"
+          │
+          ▼
+    ┌─────────────┐
+    │ Orchestrator │ ← Phân task
+    └──────┬──────┘
+           │
+    ┌──────┼──────────────┐
+    ▼      ▼              ▼
+┌──────┐ ┌──────┐   ┌──────────┐
+│Front │ │Back  │   │Test      │
+│end   │ │end   │   │Engineer  │
+└──────┘ └──────┘   └──────────┘
+   │        │            │
+   └────────┼────────────┘
+            ▼
+     ┌────────────┐
+     │ Integration│
+     └────────────┘</pre><button class="copy-btn" onclick="copyCode(event)">Copy</button></div>
+    <div class="insight"><strong>Key:</strong> Agent phức tạp nhất — biết chia task, giao cho đúng specialist, tổng hợp kết quả.</div>
+
+    <!-- PLATFORM COMPARISON -->
+    <h2>Phụ Lục: So Sánh Nền Tảng</h2>
+    <table>
+      <thead><tr><th>Feature</th><th>Gemini Gems</th><th>ChatGPT GPTs</th><th>Cursor</th><th>Antigravity</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Custom Instructions</strong></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td></tr>
+        <tr><td><strong>Code Execution</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td></tr>
+        <tr><td><strong>File System</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td></tr>
+        <tr><td><strong>Terminal</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td></tr>
+        <tr><td><strong>Rules File</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-check-circle"></i></td><td><i class="ph ph-check-circle"></i></td></tr>
+        <tr><td><strong>Agent System</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td>Partial</td><td><i class="ph ph-check-circle"></i> Full</td></tr>
+        <tr><td><strong>Workflows</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td>Partial</td><td><i class="ph ph-check-circle"></i> Full</td></tr>
+        <tr><td><strong>Skill Loading</strong></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-x-circle"></i></td><td><i class="ph ph-check-circle"></i></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ROADMAP -->
+    <h2>Progression Roadmap</h2>
+    <table>
+      <thead><tr><th>Thời gian</th><th>Hành động</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tuần 1</strong></td><td>Tạo 3-5 Gems cho tasks hay dùng nhất</td></tr>
+        <tr><td><strong>Tuần 2</strong></td><td>Viết GEMINI.md cho project chính</td></tr>
+        <tr><td><strong>Tuần 3</strong></td><td>Tạo 2-3 Skills cho domain knowledge</td></tr>
+        <tr><td><strong>Tuần 4</strong></td><td>Thiết kế 1-2 Workflows cho recurring processes</td></tr>
+        <tr><td><strong>Tháng 2</strong></td><td>Thêm Agent definitions nếu project đa domain</td></tr>
+        <tr><td><strong>Tháng 3</strong></td><td>Iterate, refine dựa trên thực tế sử dụng</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight" style="margin-top:40px">
+      <strong><i class="ph ph-push-pin"></i> Xem ví dụ thực tế:</strong> Research Agent System cho Cún · Flow Automation cho Anh Sơn → <a href="../appendix/examples-personas.html" style="color:var(--black);font-weight:700">Ví Dụ Theo Persona</a>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="level-2-customize.html">← Level 2: Customize</a>
+      <a href="../index.html">Hub →</a>
+    </div>
+  </main>
+</div>
+<script>function copyCode(e){e.stopPropagation();const p=e.target.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(p.textContent);const b=e.target;b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)}</script>
+</body></html>

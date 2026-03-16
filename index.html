@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Mastery — Workshop for Anh Sơn</title>
+<link rel="stylesheet" href="../hoc-vien/shared.css">
+<style>
+  .hero { padding: 0 0 40px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 24px 0; }
+  .card { background: var(--white); border: 1px solid var(--border); padding: 28px; text-decoration: none; transition: all 0.15s; display: block; }
+  .card:hover { border-color: var(--black); }
+  .card-tag { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--slate); margin-bottom: 6px; }
+  .card h3 { font-family: var(--heading); font-size: 32px; font-weight: 700; color: var(--black); text-transform: uppercase; margin: 0 0 6px; letter-spacing: 1px; }
+  .card p { font-size: 17px; color: var(--slate); margin: 0; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 40px 0; }
+  .stat { text-align: center; padding: 20px; border: 1px solid var(--border); }
+  .stat-val { font-family: var(--heading); font-size: 44px; font-weight: 700; color: var(--black); line-height: 1; }
+  .stat-label { font-size: 16px; color: var(--slate); margin-top: 4px; }
+  .full-card { grid-column: 1 / -1; }
+  .level-badge { display: inline-block; padding: 4px 12px; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .level-1 { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  .level-2 { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+  .level-3 { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+  .taxonomy { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 24px 0; border: 3px solid var(--black); }
+  .tax-col { padding: 24px; border-right: 1px solid var(--border); }
+  .tax-col:last-child { border-right: none; }
+  .tax-title { font-family: var(--heading); font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .tax-meta { font-size: 15px; color: var(--slate); margin-bottom: 12px; }
+  .tax-example { font-size: 17px; font-style: italic; color: var(--slate); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+  .tax-level { font-size: 14px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 1px; }
+  .gap-table td:first-child { font-size: 28px; text-align: center; width: 50px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } .taxonomy { grid-template-columns: 1fr 1fr; } }
+</style>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head><body>
+<div class="main" style="margin-left:0; max-width:1811px; margin:0 auto; padding:50px 73px;">
+
+  <div class="hero">
+    <p style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--slate);margin-bottom:8px">Workshop · 3 Levels · Cross-Platform</p>
+    <h1>AI Agent<br>Mastery</h1>
+    <p class="subtitle">Tài liệu cho Anh Sơn — Từ cơ bản đến xây hệ thống agent riêng</p>
+    <p style="font-size:17px;color:var(--slate)">Thiết kế bởi Jang Trịnh · Tháng 3/2026</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val">3</div><div class="stat-label">Levels</div></div>
+    <div class="stat"><div class="stat-val">12</div><div class="stat-label">Sessions</div></div>
+    <div class="stat"><div class="stat-val">10+</div><div class="stat-label">Bài Tập</div></div>
+    <div class="stat"><div class="stat-val">6+</div><div class="stat-label">Platforms</div></div>
+  </div>
+
+  <!-- GAP -->
+  <h2>Vấn Đề</h2>
+  <div class="why">
+    <div class="why-label"><i class="ph ph-book-open"></i> Tại Sao Workshop Này Tồn Tại</div>
+    <p style="font-size:20px;margin:0">95% người dùng AI vẫn ở cấp "hỏi - chờ trả lời". Chưa khai thác khả năng <strong>agentic</strong> — nơi AI chủ động, tuân theo quy trình, và phối hợp nhiều chuyên gia cùng lúc.</p>
+  </div>
+  <table>
+    <thead><tr><th></th><th>Cấp Độ</th><th>Người Dùng</th><th>Kết Quả</th></tr></thead>
+    <tbody class="gap-table">
+      <tr><td>🟢</td><td><strong>Lv.1 — Chat</strong></td><td>95%</td><td>Copypaste, chất lượng lồi lõm, không nhất quán</td></tr>
+      <tr><td>🟡</td><td><strong>Lv.2 — Custom Instructions</strong></td><td>~4%</td><td>Output tốt hơn nhưng vẫn manual mỗi lần</td></tr>
+      <tr><td><i class="ph ph-circle-fill"></i></td><td><strong>Lv.3 — Agent System</strong></td><td><1%</td><td>AI tuân thủ quy trình, tự routing, chất lượng ổn định</td></tr>
+    </tbody>
+  </table>
+
+  <!-- TAXONOMY -->
+  <h2>Khung Khái Niệm</h2>
+  <div class="taxonomy">
+    <div class="tax-col">
+      <div class="tax-title">Prompt</div>
+      <div class="tax-meta">Lệnh 1 lần, không lưu trữ</div>
+      <div class="tax-level">Đơn giản nhất</div>
+      <div class="tax-example">"Dịch đoạn này sang tiếng Anh"</div>
+    </div>
+    <div class="tax-col">
+      <div class="tax-title">Skill</div>
+      <div class="tax-meta">Kiến thức chuyên sâu, tái sử dụng</div>
+      <div class="tax-level">Reusable</div>
+      <div class="tax-example">"Biết cách viết React component chuẩn"</div>
+    </div>
+    <div class="tax-col">
+      <div class="tax-title">Workflow</div>
+      <div class="tax-meta">Quy trình nhiều bước, có thứ tự</div>
+      <div class="tax-level">Repeatable</div>
+      <div class="tax-example">"Lint → Test → Build → Deploy"</div>
+    </div>
+    <div class="tax-col">
+      <div class="tax-title">Agent</div>
+      <div class="tax-meta">Vai trò + Quyết định + Phối hợp</div>
+      <div class="tax-level">Autonomous</div>
+      <div class="tax-example">"Frontend specialist tự chọn skill, routing task"</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <strong>Phép tương đồng — Nhà hàng:</strong> Prompt = order 1 món · Skill = công thức nấu · Workflow = quy trình từ order → ra bàn · Agent = bếp trưởng biết chọn công thức, phối hợp bếp phụ.
+  </div>
+
+  <!-- LEVELS -->
+  <h2>3 Levels</h2>
+  <div class="grid">
+    <a href="levels/level-1-understand.html" class="card">
+      <span class="level-badge level-1">Level 1</span>
+      <div class="card-tag">2-3 giờ · Ai cũng làm được</div>
+      <h3>Understand</h3>
+      <p>Context Engineering · Gemini Gems · 5 Prompt Patterns · Few-shot Learning</p>
+    </a>
+    <a href="levels/level-2-customize.html" class="card">
+      <span class="level-badge level-2">Level 2</span>
+      <div class="card-tag">2-3 giờ · Cần hiểu cấu trúc</div>
+      <h3>Customize</h3>
+      <p>Rules Files · Workflows · Slash Commands · Anti-Patterns</p>
+    </a>
+    <a href="levels/level-3-build.html" class="card">
+      <span class="level-badge level-3">Level 3</span>
+      <div class="card-tag">2-3 giờ · Cần tư duy kiến trúc</div>
+      <h3>Build</h3>
+      <p>Agent Architecture · Skill Design · Orchestration · Advanced Patterns</p>
+    </a>
+    <a href="appendix/examples-personas.html" class="card full-card">
+      <div class="card-tag">Phụ lục · Ví dụ thực tế</div>
+      <h3>Ví Dụ Theo Persona</h3>
+      <p>Use cases cho Anh Sơn (Thiết kế nội thất) · Cún (Sinh viên AI) — Gemini, AI Studio, NotebookLM, Imagen, Antigravity, Nano</p>
+    </a>
+  </div>
+
+  <!-- KẾT QUẢ -->
+  <h2>Kết Quả Sau Khóa Học</h2>
+  <div class="objectives">
+    <div class="objectives-title"><i class="ph ph-target"></i> Học viên sẽ đạt được</div>
+    <div class="objective"><div class="obj-icon">1</div> <strong>Hiểu kiến trúc agent</strong> — phân biệt Agent / Workflow / Skill / Prompt</div>
+    <div class="objective"><div class="obj-icon">2</div> <strong>Tự tạo Gem + Rules</strong> — customize AI cho công việc cá nhân</div>
+    <div class="objective"><div class="obj-icon">3</div> <strong>Build workflow thực tế</strong> — thiết kế quy trình multi-step</div>
+    <div class="objective"><div class="obj-icon">4</div> <strong>Thiết kế hệ thống agent</strong> — xây .agent/ system cho dự án riêng</div>
+    <div class="objective"><div class="obj-icon">5</div> <strong>Biết khi nào KHÔNG dùng</strong> — tránh over-automation</div>
+  </div>
+
+  <!-- FORMAT -->
+  <h2>Hình Thức Sử Dụng</h2>
+  <table>
+    <thead><tr><th>Hình thức</th><th>Cách dùng</th><th>Phù hợp với</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Self-study</strong></td><td>Đọc tuần tự Level 1 → 2 → 3</td><td>Tự học, theo tốc độ riêng</td></tr>
+      <tr><td><strong>1-day intensive</strong></td><td>8 tiếng với hands-on exercises</td><td>Workshop live, team training</td></tr>
+      <tr><td><strong>3-session series</strong></td><td>3 buổi × 2-3h, cách nhau 1 tuần</td><td>Học sâu, có thời gian practice</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning" style="margin-top:40px">
+    <strong><i class="ph ph-warning"></i> Ghi chú:</strong> Mỗi level có thể dạy độc lập. Level 1 phù hợp mọi đối tượng. Level 3 cần nền tảng từ Level 1-2.
+  </div>
+
+</div>
+</body></html>
